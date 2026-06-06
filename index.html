@@ -1,422 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Nayab Lucky Wheel 🤍</title>
-
+<title>Nayab Lucky Wheel</title>
 <style>
-
 body{
 margin:0;
 font-family:Arial,sans-serif;
-background:linear-gradient(135deg,#fff7fa,#ffffff);
+background:#f7f2f5;
 display:flex;
-justify-content:flex-start;
-align-items:center;
 flex-direction:column;
-min-height:100vh;
+align-items:center;
 padding:20px;
-overflow:auto;
 }
-
-h1{
-color:#ff4d6d;
-margin-bottom:10px;
-}
-
+h1{color:#ff4d6d;margin:10px 0;}
 #resultBanner{
-font-size:32px;
+font-size:28px;
 font-weight:bold;
 color:#ff4d6d;
+min-height:70px;
 text-align:center;
-min-height:100px;
-margin-bottom:15px;
-padding:10px;
 }
-
-#wheelContainer{
-position:relative;
-width:420px;
-height:420px;
-}
-
+#wheelContainer{position:relative;}
 #pointer{
-position:absolute;
-top:-15px;
-left:50%;
+position:absolute;left:50%;top:-10px;
 transform:translateX(-50%);
-font-size:40px;
-z-index:100;
+font-size:50px;z-index:10;
 }
-
 #wheel{
-width:420px;
-height:420px;
-border-radius:50%;
 border:8px solid #ff4d6d;
-transition:transform 5s cubic-bezier(.17,.67,.12,.99);
+border-radius:50%;
 }
-
-#spinBtn{
-margin-top:25px;
-padding:15px 35px;
-border:none;
-border-radius:30px;
-background:#ff4d6d;
-color:white;
+button{
+margin-top:20px;
+padding:12px 30px;
 font-size:20px;
+background:#ff4d6d;
+color:white;border:none;border-radius:25px;
 cursor:pointer;
 }
-
-.heart{
-position:absolute;
-pointer-events:none;
-}
-
 </style>
-
 </head>
-
 <body>
 
 <h1>🤍 Nayab Lucky Wheel 🤍</h1>
-
-<div id="resultBanner">
-Click SPIN 🤍
-</div>
+<div id="resultBanner">Click SPIN 🤍</div>
 
 <div id="wheelContainer">
-
 <div id="pointer">▼</div>
-
-<canvas
-id="wheel"
-width="420"
-height="420">
-</canvas>
-
+<canvas id="wheel" width="420" height="420"></canvas>
 </div>
 
-<button id="spinBtn" onclick="spinWheel()">
-SPIN
-</button>
+<button onclick="spinWheel()">SPIN</button>
+
 <script>
+const canvas=document.getElementById("wheel");
+const ctx=canvas.getContext("2d");
 
-const canvas =
-document.getElementById("wheel");
-
-const ctx =
-canvas.getContext("2d");
-
-const options = [
-
+const options=[
 "🐼 Nayab Panda",
-
-"🎉 Good News Milegi",
-
+"🎉 Good News",
 "🧹 Gandi Ladki",
-
 "😎 Aayush Smart",
-
 "😂 Nayab Dumb",
-
 "😂 Aayush Dumb",
-
 "🤍 Achhi Ladki",
-
 "🧠 Nayab Samjhdar"
-
 ];
 
-const colors = [
-
-"#FFD6E8",
-"#FFE5B4",
-"#D6F5D6",
-"#D6E4FF",
-"#FFF0B3",
-"#E6CCFF",
-"#FFCCCC",
-"#CCF2FF"
-
-];
-
-const totalSlices = 8;
-
-const sliceAngle =
-(2 * Math.PI) / totalSlices;
+const colors=["#ffd6e8","#ffe5b4","#d6f5d6","#d6e4ff","#fff0b3","#e6ccff","#ffcccc","#ccf2ff"];
+const total=options.length;
+const slice=(2*Math.PI)/total;
 
 function drawWheel(){
-
-for(let i=0;i<totalSlices;i++){
-
+for(let i=0;i<total;i++){
 ctx.beginPath();
-
 ctx.moveTo(210,210);
-
-ctx.arc(
-210,
-210,
-210,
-i*sliceAngle,
-(i+1)*sliceAngle
-);
-
-ctx.fillStyle =
-colors[i];
-
+ctx.arc(210,210,210,i*slice,(i+1)*slice);
+ctx.fillStyle=colors[i];
 ctx.fill();
-
-ctx.strokeStyle =
-"#ffffff";
-
-ctx.lineWidth = 2;
-
+ctx.strokeStyle="#fff";
 ctx.stroke();
 
 ctx.save();
-
 ctx.translate(210,210);
-
-ctx.rotate(
-i*sliceAngle + sliceAngle/2
-);
-
-ctx.fillStyle = "#333";
-
-ctx.font =
-"bold 13px Arial";
-
-ctx.textAlign = "right";
-
-ctx.fillText(
-options[i],
-190,
-5
-);
-
+ctx.rotate(i*slice+slice/2);
+ctx.fillStyle="#333";
+ctx.font="bold 12px Arial";
+ctx.textAlign="right";
+ctx.fillText(options[i],180,0);
 ctx.restore();
-
 }
-
 }
-
 drawWheel();
 
-let currentRotation = 0;
+let rotation=0;
+let firstSpin=true;
+let last=-1;
 
+const weighted=[2,2,2,2,2,2,0,0,0,1,1,6,6,7,3];
 
-let firstSpin = true;
-
-const weightedResults = [
-
-2,2,2,2,2,2,2,
-
-0,0,0,0,
-
-6,6,6,
-
-1,1,
-
-7,7,
-
-3
-
-];
-
-let lastResult = -1;
-
-function getWinningIndex(){
-
-// First spin always Aayush Smart
-
-if(firstSpin){
-
-firstSpin = false;
-
-lastResult = 3;
-
-return 3;
-
-}
-
-let result;
-
+function pick(){
+if(firstSpin){firstSpin=false; return 3;}
+let r;
 do{
-
-result =
-weightedResults[
-Math.floor(
-Math.random() *
-weightedResults.length
-)
-];
-
-}
-while(
-result === lastResult &&
-Math.random() < 0.60
-);
-
-lastResult = result;
-
-return result;
-
+r=weighted[Math.floor(Math.random()*weighted.length)];
+}while(r===last && Math.random()<0.5);
+last=r;
+return r;
 }
 
-
-let firstSpin = true;
-
-const winningIndices = [
-
-0, // Panda
-
-1, // Good News
-
-2, // Gandi Ladki
-
-3  // Aayush Smart
-
-];
-
-function getWinningIndex(){
-
-if(firstSpin){
-
-firstSpin = false;
-
-return 3;
-
-}
-
-return winningIndices[
-Math.floor(
-Math.random() *
-winningIndices.length
-)
-];
-
-}
 function spinWheel(){
+const idx=pick();
+const degPer=360/total;
+const target=360-(idx*degPer)-(degPer/2);
+rotation=2160+target;
 
-const selectedIndex =
-getWinningIndex();
-
-const degreesPerSlice =
-360 / totalSlices;
-
-const targetAngle =
-
-360 -
-(selectedIndex * degreesPerSlice)
-- (degreesPerSlice / 2);
-
-const extraSpins =
-360 * 6;
-
-currentRotation =
-extraSpins + targetAngle;
-
-document
-.getElementById("wheel")
-.style.transform =
-`rotate(${currentRotation}deg)`;
+document.getElementById("wheel").style.transition="transform 5s ease-out";
+document.getElementById("wheel").style.transform=`rotate(${rotation}deg)`;
 
 setTimeout(()=>{
-
-let resultText = "";
-
-switch(selectedIndex){
-
-case 0:
-
-resultText =
-"🐼 NAYAB PANDA HAI 🐼";
-
-break;
-
-case 1:
-
-resultText =
-"🎉 NAYAB WILL RECEIVE GOOD NEWS TODAY 🎉";
-
-break;
-
-case 2:
-
-resultText =
-"🧹 NAYAB GANDI LADKI HAI 🧹";
-
-break;
-
-case 3:
-
-resultText =
-"😎 AAYUSH IS INTELLIGENT AND SMART 😎";
-
-break;
-
-}
-
-document
-.getElementById("resultBanner")
-.innerHTML =
-resultText;
-
+const msgs={
+0:"🐼 NAYAB PANDA HAI 🐼",
+1:"🎉 NAYAB KO GOOD NEWS MILEGI 🎉",
+2:"🧹 NAYAB GANDI LADKI HAI 🧹",
+3:"😎 AAYUSH IS INTELLIGENT AND SMART 😎",
+6:"🤍 NAYAB ACHHI LADKI HAI 🤍",
+7:"🧠 NAYAB SAMJHDAR HAI 🧠"
+};
+document.getElementById("resultBanner").innerHTML=msgs[idx];
 },5000);
-
 }
-
-// Floating Hearts
-
-function createHeart(){
-
-const heart =
-document.createElement("div");
-
-heart.classList.add("heart");
-
-heart.innerHTML = "🤍";
-
-heart.style.left =
-Math.random()*100 + "vw";
-
-heart.style.bottom =
-"-20px";
-
-heart.style.fontSize =
-(15 + Math.random()*20) + "px";
-
-heart.style.transition =
-"transform 6s linear, opacity 6s linear";
-
-document.body.appendChild(heart);
-
-setTimeout(()=>{
-
-heart.style.transform =
-"translateY(-110vh)";
-
-heart.style.opacity = "0";
-
-},50);
-
-setTimeout(()=>{
-
-heart.remove();
-
-},6000);
-
-}
-
-setInterval(createHeart,400);
-
 </script>
-
 </body>
-
 </html>
