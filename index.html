@@ -114,7 +114,7 @@ return r;
 function spinWheel(){
 const idx=pick();
 const degPer=360/total;
-const target=360-(idx*degPer)-(degPer/2);
+const target=360-(idx*degPer)-(degPer/2)-90;
 rotation=2160+target;
 
 document.getElementById("wheel").style.transition="transform 5s ease-out";
