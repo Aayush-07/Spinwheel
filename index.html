@@ -3,135 +3,255 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nayab Lucky Wheel</title>
+<title>Nayab Industries Ltd.</title>
+
 <style>
-body{
+
+*{
 margin:0;
-font-family:Arial,sans-serif;
-background:#f7f2f5;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:Arial, sans-serif;
+background:linear-gradient(135deg,#fdfbfb,#ebedee);
+min-height:100vh;
 display:flex;
-flex-direction:column;
+justify-content:center;
 align-items:center;
 padding:20px;
 }
-h1{color:#ff4d6d;margin:10px 0;}
-#resultBanner{
-font-size:28px;
-font-weight:bold;
-color:#ff4d6d;
-min-height:70px;
+
+.card{
+
+background:white;
+
+max-width:700px;
+
+width:100%;
+
+padding:40px;
+
+border-radius:25px;
+
+box-shadow:0 15px 40px rgba(0,0,0,0.12);
+
 text-align:center;
+
 }
-#wheelContainer{position:relative;}
-#pointer{
-position:absolute;left:50%;top:-10px;
-transform:translateX(-50%);
-font-size:50px;z-index:10;
+
+h1{
+
+font-size:42px;
+
+color:#2c3e50;
+
+margin-bottom:15px;
+
 }
-#wheel{
-border:8px solid #ff4d6d;
-border-radius:50%;
+
+.ticker{
+
+font-size:22px;
+
+margin-bottom:8px;
+
+color:#555;
+
 }
-button{
-margin-top:20px;
-padding:12px 30px;
+
+.status{
+
+font-size:18px;
+
+color:#27ae60;
+
+margin-bottom:35px;
+
+font-weight:bold;
+
+}
+
+.section{
+
+margin-top:35px;
+
+padding-top:25px;
+
+border-top:1px solid #eee;
+
+}
+
+.section h2{
+
+margin-bottom:15px;
+
+color:#34495e;
+
+font-size:24px;
+
+}
+
+.text{
+
+font-size:18px;
+
+line-height:1.8;
+
+color:#444;
+
+}
+
+.highlight{
+
+font-size:26px;
+
+font-weight:bold;
+
+color:#2c3e50;
+
+}
+
+.footer{
+
+margin-top:40px;
+
 font-size:20px;
-background:#ff4d6d;
-color:white;border:none;border-radius:25px;
-cursor:pointer;
+
+line-height:1.8;
+
 }
+
+.heart{
+
+font-size:30px;
+
+margin-top:15px;
+
+}
+
 </style>
+
 </head>
+
 <body>
 
-<h1>🤍 Nayab Lucky Wheel 🤍</h1>
-<div id="resultBanner">Click SPIN 🤍</div>
+<div class="card">
 
-<div id="wheelContainer">
-<div id="pointer">▼</div>
-<canvas id="wheel" width="420" height="420"></canvas>
+<h1>📈 NAYAB INDUSTRIES LTD.</h1>
+
+<div class="ticker">
+Ticker: NYB
 </div>
 
-<button onclick="spinWheel()">SPIN</button>
+<div class="ticker">
+Exchange: Friendship Exchange (FEX)
+</div>
 
-<script>
-const canvas=document.getElementById("wheel");
-const ctx=canvas.getContext("2d");
+<div class="status">
+Status: Listed
+</div>
 
-const options=[
-"🐼 Nayab Panda",
-"🎉 Good News",
-"🧹 Gandi Ladki",
-"😎 Aayush Smart",
-"😂 Nayab Dumb",
-"😂 Aayush Dumb",
-"🤍 Achhi Ladki",
-"🧠 Nayab Samjhdar"
-];
+<div class="section">
 
-const colors=["#ffd6e8","#ffe5b4","#d6f5d6","#d6e4ff","#fff0b3","#e6ccff","#ffcccc","#ccf2ff"];
-const total=options.length;
-const slice=(2*Math.PI)/total;
+<h2>MARKET SUMMARY</h2>
 
-function drawWheel(){
-for(let i=0;i<total;i++){
-ctx.beginPath();
-ctx.moveTo(210,210);
-ctx.arc(210,210,210,i*slice,(i+1)*slice);
-ctx.fillStyle=colors[i];
-ctx.fill();
-ctx.strokeStyle="#fff";
-ctx.stroke();
+<div class="text">
 
-ctx.save();
-ctx.translate(210,210);
-ctx.rotate(i*slice+slice/2);
-ctx.fillStyle="#333";
-ctx.font="bold 12px Arial";
-ctx.textAlign="right";
-ctx.fillText(options[i],180,0);
-ctx.restore();
-}
-}
-drawWheel();
+Current Price:
+<span class="highlight">₹∞</span>
 
-let rotation=0;
-let firstSpin=true;
-let last=-1;
+<br><br>
 
-const weighted=[2,2,2,2,2,2,0,0,0,1,1,6,6,7,3];
+52 Week High:
+<span class="highlight">Still Rising</span>
 
-function pick(){
-if(firstSpin){firstSpin=false; return 3;}
-let r;
-do{
-r=weighted[Math.floor(Math.random()*weighted.length)];
-}while(r===last && Math.random()<0.5);
-last=r;
-return r;
-}
+<br><br>
 
-function spinWheel(){
-const idx=pick();
-const degPer=360/total;
-const target=360-(idx*degPer)-(degPer/2)-90;
-rotation=2160+target;
+52 Week Low:
+<span class="highlight">Not Found</span>
 
-document.getElementById("wheel").style.transition="transform 5s ease-out";
-document.getElementById("wheel").style.transform=`rotate(${rotation}deg)`;
+<br><br>
 
-setTimeout(()=>{
-const msgs={
-0:"🐼 NAYAB PANDA HAI 🐼",
-1:"🎉 NAYAB KO GOOD NEWS MILEGI 🎉",
-2:"🧹 NAYAB GANDI LADKI HAI 🧹",
-3:"😎 AAYUSH IS INTELLIGENT AND SMART 😎",
-6:"🤍 NAYAB ACHHI LADKI HAI 🤍",
-7:"🧠 NAYAB SAMJHDAR HAI 🧠"
-};
-document.getElementById("resultBanner").innerHTML=msgs[idx];
-},5000);
-}
-</script>
+Market Sentiment:
+<span class="highlight">Positive</span>
+
+<br><br>
+
+Market Capitalization:
+<span class="highlight">Beyond Calculation</span>
+
+</div>
+
+</div>
+
+<div class="section">
+
+<h2>ANALYST COVERAGE</h2>
+
+<div class="text">
+
+✔ Rare Human
+
+</div>
+
+</div>
+
+<div class="section">
+
+<h2>LONG-TERM OUTLOOK</h2>
+
+<div class="text">
+
+Investment Horizon:
+<span class="highlight">Lifetime</span>
+
+<br><br>
+
+Recommendation:
+<span class="highlight">STRONG HOLD</span>
+
+</div>
+
+</div>
+
+<div class="section">
+
+<h2>IMPORTANT DISCLOSURE</h2>
+
+<div class="text">
+
+This report is not intended to influence any decisions.
+
+<br><br>
+
+It merely reflects the opinion of one shareholder.
+
+<br><br>
+
+That shareholder feels fortunate to know the company.
+
+</div>
+
+</div>
+
+<div class="footer">
+
+Trading Closed
+
+<br><br>
+
+Thank you for visiting
+Nayab Industries Ltd.
+
+<div class="heart">
+🤍
+</div>
+
+</div>
+
+</div>
+
 </body>
 </html>
